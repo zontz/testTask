@@ -11,7 +11,7 @@ import SwiftUI
 struct aezakmiTaskApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashScreenView()
         }
     }
 }
