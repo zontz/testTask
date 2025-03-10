@@ -7,6 +7,55 @@
 
 import SwiftUI
 import Combine
+import LanScanner
+
+struct SecondContentView: View {
+    
+    @ObservedObject var viewModel: SecondContentViewModel
+    
+    var body: some View  {
+        VStack {
+            List(viewModel.connectedDevices, id: \.id) { device in
+                VStack(alignment: .leading) {
+                    Text("IP-адрес: \(device.ipAddress)")
+                        .font(.subheadline)
+                    Text("MAC-адрес: \(device.mac)")
+                        .font(.subheadline)
+                    Text("Имя: \(device.name)")
+                        .font(.subheadline)
+                }
+            }
+        }
+        .onAppear {
+            viewModel.startScan()
+        }
+    }
+}
+
+class SecondContentViewModel: ObservableObject {
+    @Published var connectedDevices: [LanDevice] = []
+    private var lanScanner: LanScannerService
+    
+    init(lanScanner: LanScannerService) {
+        self.lanScanner = lanScanner
+        self.lanScanner.delegate = self
+    }
+    
+    func startScan() {
+        lanScanner.startScanning()
+    }
+}
+
+extension SecondContentViewModel: LanScannnerServiceDelegate {
+    func lanScanHasUpdatedProgress(_ progress: CGFloat, address: String) {
+        print("\(progress)")
+    }
+    
+    func lanScanDidFinishScanning() {
+        print("finish")
+        connectedDevices = lanScanner.connectedDevices
+    }
+}
 
 struct ContentView: View {
     
