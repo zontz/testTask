@@ -14,7 +14,7 @@ struct SplashScreenView: View {
     
     var body: some View {
         if isActive {
-            ContentView()
+            ContentView(viewModel: ContentViewModel(bluetoothDiscover: BluetoothDiscoverImpl(mapper: BTDeviceInfoMapperImpl())))
         } else {
             ZStack {
                 VStack {
