@@ -1,0 +1,24 @@
+{
+  "originHash" : "cf1294cf03f6649a8a12633687b5b0840130f82e0c243728f65ec66d2e02c7c7",
+  "pins" : [
+    {
+      "identity" : "lan-scanner",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MaatheusGois/lan-scanner.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "b5d4cda7161efec0fa042670eaa9bb7aeeba5bee"
+      }
+    },
+    {
+      "identity" : "lottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-ios.git",
+      "state" : {
+        "revision" : "047aa81b77adcbf583a966dfef620d17650cc656",
+        "version" : "4.5.1"
+      }
+    }
+  ],
+  "version" : 3
+}
