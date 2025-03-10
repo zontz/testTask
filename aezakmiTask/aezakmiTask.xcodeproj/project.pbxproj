@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		956F1BB42D7EE09E0060F390 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 956F1BB32D7EE09E0060F390 /* Lottie */; };
+		95F4F2DF2D7E013B003BB61B /* LanScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 95F4F2DE2D7E013B003BB61B /* LanScanner */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		955A69522D7D019C000F08DD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F4F2DF2D7E013B003BB61B /* LanScanner in Frameworks */,
+				956F1BB42D7EE09E0060F390 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +119,8 @@
 			);
 			name = aezakmiTask;
 			packageProductDependencies = (
+				95F4F2DE2D7E013B003BB61B /* LanScanner */,
+				956F1BB32D7EE09E0060F390 /* Lottie */,
 			);
 			productName = aezakmiTask;
 			productReference = 955A69412D7D019B000F08DD /* aezakmiTask.app */;
@@ -195,6 +204,10 @@
 			);
 			mainGroup = 955A69382D7D019B000F08DD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				95F4F2DD2D7E013B003BB61B /* XCRemoteSwiftPackageReference "lan-scanner" */,
+				956F1BB22D7EE09E0060F390 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 955A69422D7D019B000F08DD /* Products */;
 			projectDirPath = "";
@@ -552,6 +565,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		956F1BB22D7EE09E0060F390 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
+		95F4F2DD2D7E013B003BB61B /* XCRemoteSwiftPackageReference "lan-scanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MaatheusGois/lan-scanner.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		956F1BB32D7EE09E0060F390 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 956F1BB22D7EE09E0060F390 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		95F4F2DE2D7E013B003BB61B /* LanScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95F4F2DD2D7E013B003BB61B /* XCRemoteSwiftPackageReference "lan-scanner" */;
+			productName = LanScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 955A69392D7D019B000F08DD /* Project object */;
 }
