@@ -32,28 +32,54 @@ struct SecondContentView: View {
     }
 }
 
+
+
+
 class SecondContentViewModel: ObservableObject {
     @Published var connectedDevices: [LanDevice] = []
-    private var lanScanner: LanScannerService
+    @Published var progress: CGFloat = 0
+    @Published var isScanningFinished: Bool = false
+    private let lanScanner: LanScannerService
+    private var cancellables = Set<AnyCancellable>()
     
     init(lanScanner: LanScannerService) {
         self.lanScanner = lanScanner
-        self.lanScanner.delegate = self
+        setupBindings()
+    }
+    
+    private func setupBindings() {
+        lanScanner.scanPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] event in
+                self?.handleLanScanEvent(event)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func handleLanScanEvent(_ event: LanScanEvent) {
+        switch event {
+        case .progress(let progress, let address):
+            self.progress = progress
+            //self.currentAddress = address
+        case .newDevice(let device):
+            self.addDeviceIfNeeded(device)
+        case .finished:
+            self.isScanningFinished = true
+        }
     }
     
     func startScan() {
         lanScanner.startScanning()
     }
-}
-
-extension SecondContentViewModel: LanScannnerServiceDelegate {
-    func lanScanHasUpdatedProgress(_ progress: CGFloat, address: String) {
-        print("\(progress)")
+    
+    func stopScan() {
+        lanScanner.stopScanning()
     }
     
-    func lanScanDidFinishScanning() {
-        print("finish")
-        connectedDevices = lanScanner.connectedDevices
+    
+    private func addDeviceIfNeeded(_ device: LanDevice) {
+        guard !connectedDevices.contains(where: { $0.id == device.id }) else { return }
+        connectedDevices.append(device)
     }
 }
 
