@@ -14,15 +14,25 @@ struct SecondContentView: View {
     @ObservedObject var viewModel: SecondContentViewModel
     
     var body: some View  {
-        VStack {
-            List(viewModel.connectedDevices, id: \.id) { device in
-                VStack(alignment: .leading) {
-                    Text("IP-адрес: \(device.ipAddress)")
-                        .font(.subheadline)
-                    Text("MAC-адрес: \(device.mac)")
-                        .font(.subheadline)
-                    Text("Имя: \(device.name)")
-                        .font(.subheadline)
+        ZStack {
+            if viewModel.state.isLoading {
+                VStack {
+                    ProgressView()
+                    ProgressBarView(progress: $viewModel.state.progress)
+                }
+                
+            } else {
+                VStack {
+                    List(viewModel.state.connectedDevices, id: \.id) { device in
+                        VStack(alignment: .leading) {
+                            Text("IP-адрес: \(device.ipAddress)")
+                                .font(.subheadline)
+                            Text("MAC-адрес: \(device.mac)")
+                                .font(.subheadline)
+                            Text("Имя: \(device.name)")
+                                .font(.subheadline)
+                        }
+                    }
                 }
             }
         }
@@ -33,18 +43,47 @@ struct SecondContentView: View {
 }
 
 
+public protocol ViewModel: ObservableObject {
+    associatedtype State: Equatable
+    associatedtype Action
+    func dispatch(_ action: Action) async
+}
 
+extension LanDevice: Equatable {
+    public static func == (lhs: LanDevice, rhs: LanDevice) -> Bool {
+        lhs.id == rhs.id
+    }
+}
 
-class SecondContentViewModel: ObservableObject {
-    @Published var connectedDevices: [LanDevice] = []
-    @Published var progress: CGFloat = 0
-    @Published var isScanningFinished: Bool = false
+class SecondContentViewModel: ViewModel {
+    
+    struct State: Equatable {
+        var connectedDevices: [LanDevice] = []
+        var progress: CGFloat = 0
+        var isScanningFinished: Bool = false
+        var isLoading = false
+    }
+
+    enum Action {
+        case onAppear
+    }
+    
     private let lanScanner: LanScannerService
     private var cancellables = Set<AnyCancellable>()
+    
+    @Published var state: State  = .init()
     
     init(lanScanner: LanScannerService) {
         self.lanScanner = lanScanner
         setupBindings()
+    }
+    
+    func dispatch(_ action: Action) async {
+        switch action {
+        case .onAppear:
+            break
+            //await fetchAstronomies()
+        }
     }
     
     private func setupBindings() {
@@ -59,12 +98,13 @@ class SecondContentViewModel: ObservableObject {
     private func handleLanScanEvent(_ event: LanScanEvent) {
         switch event {
         case .progress(let progress, let address):
-            self.progress = progress
+            self.state.isLoading = true
+            self.state.progress = progress
             //self.currentAddress = address
         case .newDevice(let device):
             self.addDeviceIfNeeded(device)
         case .finished:
-            self.isScanningFinished = true
+            self.state.isLoading = false
         }
     }
     
@@ -78,8 +118,8 @@ class SecondContentViewModel: ObservableObject {
     
     
     private func addDeviceIfNeeded(_ device: LanDevice) {
-        guard !connectedDevices.contains(where: { $0.id == device.id }) else { return }
-        connectedDevices.append(device)
+        guard !state.connectedDevices.contains(where: { $0.id == device.id }) else { return }
+        state.connectedDevices.append(device)
     }
 }
 
@@ -148,5 +188,29 @@ class ContentViewModel: ObservableObject {
 extension ContentViewModel: BluetoothDiscoverDelegate {
     func didDiscoverDevices(devices: [BTDeviceInfo]) {
         self.devices = devices
+    }
+}
+
+struct ProgressBarView: View {
+    @Binding var progress: CGFloat
+    
+    var body: some View {
+        VStack {
+            Text("Progress: \(Int(progress * 100))%")
+                .font(.headline)
+                .padding(.top, 20)
+            
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 5)
+                    .frame(height: 20)
+                    .foregroundColor(Color.gray.opacity(0.3))
+                
+                RoundedRectangle(cornerRadius: 5)
+                    .frame(width: UIScreen.main.bounds.width * progress, height: 20)
+                    .foregroundColor(.blue)
+                    .animation(.easeInOut(duration: 0.5), value: progress) // Анимация прогресса
+            }
+            .padding([.leading, .trailing], 20)
+        }
     }
 }
